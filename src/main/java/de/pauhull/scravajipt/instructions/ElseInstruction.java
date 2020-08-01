@@ -9,42 +9,34 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-public class WhileInstruction implements Instruction, InstructionContainer {
+public class ElseInstruction implements Instruction, InstructionContainer {
 
     public int line;
-    public String condition;
+    public String originalCondition;
     public List<Instruction> instructions;
 
-    public WhileInstruction() {
+    public ElseInstruction() {
     }
 
-    public WhileInstruction(int line, String condition, List<Instruction> instructions) {
+    public ElseInstruction(int line, String originalCondition, List<Instruction> instructions) {
 
         this.line = line;
-        this.condition = condition;
+        this.originalCondition = originalCondition;
         this.instructions = instructions;
     }
 
     @Override
     public void run(Program program) {
 
-        while (true) {
+        Variable temp = new Variable();
+        program.evaluator.evaluate(originalCondition, temp, line);
 
-            Variable temp = new Variable();
-            program.evaluator.evaluate(condition, temp, line);
-
-            if (temp.type != Variable.Type.BOOL) {
-                throw new ProgramException(line, "Invalid condition");
-            }
-
-            if (!((boolean) temp.value)) {
-                break;
-            }
-
-            for (Instruction instruction : instructions) {
-                instruction.run(program);
-            }
+        if(temp.type != Variable.Type.BOOL) {
+            throw new ProgramException(line, "Invalid condition");
         }
+
+        if(!((boolean) temp.value))
+            instructions.forEach(i -> i.run(program));
     }
 
     @Override
@@ -57,9 +49,10 @@ public class WhileInstruction implements Instruction, InstructionContainer {
 
         JSONObject object = new JSONObject();
 
-        object.put("type", "WhileInstruction");
+        object.put("type", "ElseInstruction");
         object.put("line", line);
-        object.put("condition", condition);
+        object.put("originalCondition", originalCondition);
+
         JSONArray array = new JSONArray();
         instructions.forEach(i -> array.put(i.toJson()));
         object.put("instructions", array);
@@ -71,7 +64,7 @@ public class WhileInstruction implements Instruction, InstructionContainer {
     public Instruction fromJson(JSONObject object) {
 
         this.line = object.getInt("line");
-        this.condition = object.getString("condition");
+        this.originalCondition = object.getString("originalCondition");
         this.instructions = InstructionUtil.instructionListFromJsonArray(object.getJSONArray("instructions"));
 
         return this;

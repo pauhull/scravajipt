@@ -3,11 +3,10 @@ package de.pauhull.scravajipt.instructions;
 import de.pauhull.scravajipt.program.Program;
 import de.pauhull.scravajipt.program.ProgramException;
 import de.pauhull.scravajipt.program.Variable;
+import de.pauhull.scravajipt.util.InstructionUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class IfInstruction implements Instruction, InstructionContainer {
@@ -36,11 +35,8 @@ public class IfInstruction implements Instruction, InstructionContainer {
             throw new ProgramException(line, "Invalid condition");
         }
 
-        if((boolean) temp.value) {
-            for(Instruction instruction : instructions) {
-                instruction.run(program);
-            }
-        }
+        if((boolean) temp.value)
+            instructions.forEach(i -> i.run(program));
     }
 
     @Override
@@ -63,9 +59,7 @@ public class IfInstruction implements Instruction, InstructionContainer {
         object.put("condition", condition);
 
         JSONArray array = new JSONArray();
-        for(Instruction instruction : instructions) {
-            array.put(instruction.toJson());
-        }
+        instructions.forEach(i -> array.put(i.toJson()));
         object.put("instructions", array);
 
         return object;
@@ -76,22 +70,7 @@ public class IfInstruction implements Instruction, InstructionContainer {
 
         this.line = object.getInt("line");
         this.condition = object.getString("condition");
-        this.instructions = new ArrayList<>();
-
-        JSONArray array = object.getJSONArray("instructions");
-
-        for(int i = 0; i < array.length(); i++) {
-
-            JSONObject arrayObject = array.getJSONObject(i);
-
-            try {
-                Class<?> clazz = Class.forName("de.pauhull.scravajipt.instructions." + arrayObject.getString("type"));
-                Instruction instruction = (Instruction) clazz.getMethod("fromJson", JSONObject.class).invoke(clazz.newInstance(), arrayObject);
-                this.instructions.add(instruction);
-            } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException | InstantiationException | NoSuchMethodException e) {
-                e.printStackTrace();
-            }
-        }
+        this.instructions = InstructionUtil.instructionListFromJsonArray(object.getJSONArray("instructions"));
 
         return this;
     }

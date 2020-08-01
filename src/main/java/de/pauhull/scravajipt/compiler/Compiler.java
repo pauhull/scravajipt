@@ -89,6 +89,18 @@ public class Compiler {
                 List<Instruction> instructions = new ArrayList<>();
                 instructionToAdd = new IfInstruction(lineNum, condition, instructions);
 
+            } else if(line.toLowerCase().startsWith("else")) {
+
+                if(!(containers.getLast() instanceof IfInstruction)) {
+                    throw new CompilerException(lineNum, "No if statement found");
+                }
+
+                IfInstruction instruction = (IfInstruction) containers.getLast();
+                containers.removeLast();
+                List<Instruction> instructions = new ArrayList<>();
+
+                instructionToAdd = new ElseInstruction(lineNum, instruction.condition, instructions);
+
             } else if(line.toLowerCase().startsWith("end")) {
 
                 if (containers.size() <= 1) {

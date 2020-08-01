@@ -15,6 +15,7 @@ Instruction syntax | Description
 `println [value]` | Prints the value to the console and creates a new line.
 `input [variable]` | Asks for an input and writes it to the given variable.
 `if [condition]` | Runs the following code block, if the condition is true.
+`else` | Runs if the `if` container above it had a false condition.
 `while [condition]` | Runs the following code block over and over, until the condition is not true anymore.
 `end` | Ends a code block.
 
