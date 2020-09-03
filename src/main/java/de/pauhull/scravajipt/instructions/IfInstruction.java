@@ -3,15 +3,12 @@ package de.pauhull.scravajipt.instructions;
 import de.pauhull.scravajipt.program.Program;
 import de.pauhull.scravajipt.program.ProgramException;
 import de.pauhull.scravajipt.program.Variable;
-import de.pauhull.scravajipt.util.InstructionUtil;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.List;
 
-public class IfInstruction implements Instruction, InstructionContainer {
+public class IfInstruction extends Instruction implements InstructionContainer {
 
-    public int line;
     public String condition;
     public List<Instruction> instructions;
 
@@ -45,33 +42,20 @@ public class IfInstruction implements Instruction, InstructionContainer {
     }
 
     @Override
-    public int getLine() {
-        return line;
-    }
-
-    @Override
     public JSONObject toJson() {
 
-        JSONObject object = new JSONObject();
-
-        object.put("type", "IfInstruction");
-        object.put("line", line);
+        JSONObject object = super.toJson();
         object.put("condition", condition);
-
-        JSONArray array = new JSONArray();
-        instructions.forEach(i -> array.put(i.toJson()));
-        object.put("instructions", array);
-
+        object.put("instructions", instructionListToJson(instructions));
         return object;
     }
 
     @Override
     public Instruction fromJson(JSONObject object) {
 
-        this.line = object.getInt("line");
+        super.fromJson(object);
         this.condition = object.getString("condition");
-        this.instructions = InstructionUtil.instructionListFromJsonArray(object.getJSONArray("instructions"));
-
+        this.instructions = jsonToInstructionList(object.getJSONArray("instructions"));
         return this;
     }
 }

@@ -1,12 +1,10 @@
 package de.pauhull.scravajipt.compiler;
 
+import de.pauhull.scravajipt.function.Function;
 import de.pauhull.scravajipt.instructions.*;
 import de.pauhull.scravajipt.program.Program;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class Compiler {
@@ -26,7 +24,7 @@ public class Compiler {
 
             String line = lines.get(lineNum);
 
-            Instruction instructionToAdd;
+            Instruction instructionToAdd = null;
 
             if(line.toLowerCase().startsWith("set ")) {
 
@@ -145,14 +143,64 @@ public class Compiler {
                 }
             } else if(line.isEmpty() || line.startsWith("#") || line.startsWith("//")) {
 
-                instructionToAdd = null;
+                continue;
             } else {
 
-                throw new CompilerException(lineNum, "Unexpected expression");
+                List<Function> functionsSortedByLength = new ArrayList<>(program.functions);
+                functionsSortedByLength.sort(Comparator.comparingInt(o -> Integer.MAX_VALUE - o.name.length()));
+
+                boolean foundFunction = false;
+                for(Function function : functionsSortedByLength) {
+
+                    if(line.toLowerCase().replace(" ", "").startsWith(function.name.toLowerCase() + "(")) {
+
+                        String parametersRaw = line.substring(line.indexOf('(') + 1, line.lastIndexOf(')'));
+
+                        LinkedList<StringBuilder> stringBuilders = new LinkedList<>();
+
+                        if(!parametersRaw.isEmpty()) {
+                            stringBuilders.add(new StringBuilder());
+
+                            boolean isString = false;
+                            for (char c : parametersRaw.toCharArray()) {
+
+                                if (c == '\"') {
+                                    isString = !isString;
+                                }
+
+                                if (c == ',' && !isString) {
+                                    stringBuilders.add(new StringBuilder());
+                                    continue;
+                                }
+
+                                stringBuilders.getLast().append(c);
+                            }
+                        }
+
+                        String[] parameters = new String[stringBuilders.size()];
+                        int i = 0;
+                        for(StringBuilder stringBuilder : stringBuilders) {
+                            parameters[i++] = stringBuilder.toString();
+                        }
+
+                        if(function.parameterNames.length != parameters.length) {
+                            throw new CompilerException(lineNum, String.format("Expected %d parameters, but found %d", function.parameterNames.length, parameters.length));
+                        }
+
+                        instructionToAdd = new CallFunctionInstruction(lineNum, function.name, parameters);
+                        foundFunction = true;
+                        break;
+                    }
+                }
+
+                if(!foundFunction) {
+                    throw new CompilerException(lineNum, "Unexpected expression");
+                }
             }
 
             if(instructionToAdd != null) {
                 containers.getLast().getContaining().add(instructionToAdd);
+                instructionToAdd.container = containers.getLast();
             }
 
             if(instructionToAdd instanceof InstructionContainer) {

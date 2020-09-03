@@ -4,9 +4,8 @@ import de.pauhull.scravajipt.program.Program;
 import de.pauhull.scravajipt.program.Variable;
 import org.json.JSONObject;
 
-public class PrintInstruction implements Instruction {
+public class PrintInstruction extends Instruction {
 
-    public int line;
     public String print;
 
     public PrintInstruction() {
@@ -27,28 +26,18 @@ public class PrintInstruction implements Instruction {
     }
 
     @Override
-    public int getLine() {
-        return line;
-    }
-
-    @Override
     public JSONObject toJson() {
 
-        JSONObject object = new JSONObject();
-
-        object.put("type", "PrintInstruction");
-        object.put("line", line);
+        JSONObject object = super.toJson();
         object.put("print", print);
-
         return object;
     }
 
     @Override
     public Instruction fromJson(JSONObject object) {
 
-        this.line = object.getInt("line");
+        super.fromJson(object);
         this.print = object.getString("print");
-
         return this;
     }
 }

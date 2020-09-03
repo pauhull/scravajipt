@@ -37,8 +37,8 @@ Now `a` and `b` are numbers with a value of 123, `c` is a string saying "123" an
 #### Boolean Operators
 There are the following operators for booleans:
 
-- `&` (And)
-- `|` (Or)
+- `&&` (And)
+- `||` (Or)
 - `==` (Equal)
 - `!=` (Not equal)
 - `>` (Greater than)

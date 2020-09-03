@@ -85,26 +85,26 @@ public class Evaluator {
 
         toEvaluate = toEvaluate.replace(" ", "");
 
-        if(toEvaluate.indexOf('&') != -1) {
+        if(toEvaluate.contains("&&")) {
 
             Variable left = new Variable(),
                     right = new Variable();
 
-            evaluate(toEvaluate.substring(0, toEvaluate.indexOf('&')), left, line);
-            evaluate(toEvaluate.substring(toEvaluate.indexOf('&') + 1), right, line);
+            evaluate(toEvaluate.substring(0, toEvaluate.indexOf("&&")), left, line);
+            evaluate(toEvaluate.substring(toEvaluate.indexOf("&&") + 2), right, line);
 
             if(left.type == Variable.Type.BOOL && right.type == Variable.Type.BOOL) {
                 toEvaluate = Boolean.toString((boolean) left.value && (boolean) right.value);
             }
         }
 
-        if(toEvaluate.indexOf('|') != -1) {
+        if(toEvaluate.contains("||")) {
 
             Variable left = new Variable(),
                     right = new Variable();
 
-            evaluate(toEvaluate.substring(0, toEvaluate.indexOf('|')), left, line);
-            evaluate(toEvaluate.substring(toEvaluate.indexOf('|') + 1), right, line);
+            evaluate(toEvaluate.substring(0, toEvaluate.indexOf("||")), left, line);
+            evaluate(toEvaluate.substring(toEvaluate.indexOf("||") + 2), right, line);
 
             if(left.type == Variable.Type.BOOL && right.type == Variable.Type.BOOL) {
                 toEvaluate = Boolean.toString((boolean) left.value || (boolean) right.value);

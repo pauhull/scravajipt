@@ -7,9 +7,8 @@ import org.json.JSONObject;
 
 import java.util.Scanner;
 
-public class InputInstruction implements Instruction {
+public class InputInstruction extends Instruction {
 
-    public int line;
     public String writeTo;
 
     public InputInstruction() {
@@ -44,28 +43,18 @@ public class InputInstruction implements Instruction {
     }
 
     @Override
-    public int getLine() {
-        return line;
-    }
-
-    @Override
     public JSONObject toJson() {
 
-        JSONObject object = new JSONObject();
-
-        object.put("type", "InputInstruction");
-        object.put("line", line);
+        JSONObject object = super.toJson();
         object.put("writeTo", writeTo);
-
         return object;
     }
 
     @Override
     public Instruction fromJson(JSONObject object) {
 
-        this.line = object.getInt("line");
+        super.fromJson(object);
         this.writeTo = object.getString("writeTo");
-
         return this;
     }
 }

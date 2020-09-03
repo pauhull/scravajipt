@@ -1,6 +1,8 @@
 package de.pauhull.scravajipt.program;
 
 import de.pauhull.scravajipt.evaluator.Evaluator;
+import de.pauhull.scravajipt.function.Function;
+import de.pauhull.scravajipt.function.TestFunction;
 import de.pauhull.scravajipt.instructions.Instruction;
 import de.pauhull.scravajipt.instructions.InstructionContainer;
 import org.json.JSONArray;
@@ -15,6 +17,7 @@ public class Program implements InstructionContainer {
     public transient Evaluator evaluator;
     public List<Variable> variables;
     public List<Instruction> instructions;
+    public List<Function> functions;
     public transient int currentInstruction;
 
     public Program() {
@@ -22,7 +25,10 @@ public class Program implements InstructionContainer {
         this.evaluator = new Evaluator(this);
         this.variables = new ArrayList<>();
         this.instructions = new ArrayList<>();
+        this.functions = new ArrayList<>();
         this.currentInstruction = 0;
+
+        this.functions.add(new TestFunction());
     }
 
     public void run() throws ProgramException {

@@ -3,15 +3,12 @@ package de.pauhull.scravajipt.instructions;
 import de.pauhull.scravajipt.program.Program;
 import de.pauhull.scravajipt.program.ProgramException;
 import de.pauhull.scravajipt.program.Variable;
-import de.pauhull.scravajipt.util.InstructionUtil;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.List;
 
-public class ElseInstruction implements Instruction, InstructionContainer {
+public class ElseInstruction extends Instruction implements InstructionContainer {
 
-    public int line;
     public String originalCondition;
     public List<Instruction> instructions;
 
@@ -40,33 +37,20 @@ public class ElseInstruction implements Instruction, InstructionContainer {
     }
 
     @Override
-    public int getLine() {
-        return line;
-    }
-
-    @Override
     public JSONObject toJson() {
 
-        JSONObject object = new JSONObject();
-
-        object.put("type", "ElseInstruction");
-        object.put("line", line);
+        JSONObject object = super.toJson();
         object.put("originalCondition", originalCondition);
-
-        JSONArray array = new JSONArray();
-        instructions.forEach(i -> array.put(i.toJson()));
-        object.put("instructions", array);
-
+        object.put("instructions", instructionListToJson(instructions));
         return object;
     }
 
     @Override
     public Instruction fromJson(JSONObject object) {
 
-        this.line = object.getInt("line");
+        super.fromJson(object);
         this.originalCondition = object.getString("originalCondition");
-        this.instructions = InstructionUtil.instructionListFromJsonArray(object.getJSONArray("instructions"));
-
+        this.instructions = jsonToInstructionList(object.getJSONArray("instructions"));
         return this;
     }
 
