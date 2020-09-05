@@ -194,7 +194,7 @@ public class Compiler {
                 }
 
                 if(!foundFunction) {
-                    throw new CompilerException(lineNum, "Unexpected expression");
+                    throw new CompilerException(lineNum, "Unexpected expression \"" + (line) + "\"");
                 }
             }
 

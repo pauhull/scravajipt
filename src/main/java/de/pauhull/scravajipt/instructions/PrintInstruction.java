@@ -22,7 +22,7 @@ public class PrintInstruction extends Instruction {
 
         Variable temp = new Variable();
         program.evaluator.evaluate(print, temp, line);
-        System.out.print(temp.value.toString());
+        program.ioAdapter.output(temp.value.toString());
     }
 
     @Override

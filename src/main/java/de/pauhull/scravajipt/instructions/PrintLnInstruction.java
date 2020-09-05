@@ -15,6 +15,6 @@ public class PrintLnInstruction extends PrintInstruction {
     public void run(Program program) {
 
         super.run(program);
-        System.out.print("\n");
+        program.ioAdapter.output("\n");
     }
 }

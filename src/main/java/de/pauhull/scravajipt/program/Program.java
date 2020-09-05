@@ -5,6 +5,8 @@ import de.pauhull.scravajipt.function.Function;
 import de.pauhull.scravajipt.function.TestFunction;
 import de.pauhull.scravajipt.instructions.Instruction;
 import de.pauhull.scravajipt.instructions.InstructionContainer;
+import de.pauhull.scravajipt.io.ConsoleAdapter;
+import de.pauhull.scravajipt.io.IOAdapter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -14,6 +16,7 @@ import java.util.List;
 
 public class Program implements InstructionContainer {
 
+    public IOAdapter ioAdapter;
     public transient Evaluator evaluator;
     public List<Variable> variables;
     public List<Instruction> instructions;
@@ -22,6 +25,7 @@ public class Program implements InstructionContainer {
 
     public Program() {
 
+        this.ioAdapter = new ConsoleAdapter();
         this.evaluator = new Evaluator(this);
         this.variables = new ArrayList<>();
         this.instructions = new ArrayList<>();
@@ -47,7 +51,7 @@ public class Program implements InstructionContainer {
 
         for(Variable variable : variables) {
 
-            System.out.println(String.format("Variable \"%s\": Type %s, Value: \"%s\"", variable.name, variable.type.toString(), variable.value.toString()));
+            ioAdapter.output(String.format("Variable \"%s\": Type %s, Value: \"%s\"", variable.name, variable.type.toString(), variable.value.toString()));
         }
 
     }
@@ -84,6 +88,10 @@ public class Program implements InstructionContainer {
         }
 
         return this;
+    }
+
+    public void setIoAdapter(IOAdapter ioAdapter) {
+        this.ioAdapter = ioAdapter;
     }
 
     @Override

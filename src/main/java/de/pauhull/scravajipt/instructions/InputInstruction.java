@@ -1,11 +1,8 @@
 package de.pauhull.scravajipt.instructions;
 
 import de.pauhull.scravajipt.program.Program;
-import de.pauhull.scravajipt.program.ProgramException;
 import de.pauhull.scravajipt.program.Variable;
 import org.json.JSONObject;
-
-import java.util.Scanner;
 
 public class InputInstruction extends Instruction {
 
@@ -32,11 +29,12 @@ public class InputInstruction extends Instruction {
         }
 
         if(variable == null) {
-            throw new ProgramException(line, String.format("Cant find variable \"%s\"", writeTo));
+            variable = new Variable();
+            variable.name = writeTo;
+            program.variables.add(variable);
         }
 
-        Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
+        String input = program.ioAdapter.input();
 
         variable.type = Variable.Type.STRING;
         variable.value = input;

@@ -12,11 +12,11 @@ public class TestFunction extends Function {
     @Override
     public Variable run(Program program, String[] parameters) {
 
-        System.out.println("Test function called");
-        System.out.println("Parameter: " + parameters[0]);
+        program.ioAdapter.output("Test function called");
+        program.ioAdapter.output("Parameter: " + parameters[0]);
         Variable temp = new Variable();
         program.evaluator.evaluate(parameters[0], temp, 0);
-        System.out.println("Parameter evaluated: " + temp.value);
+        program.ioAdapter.output("Parameter evaluated: " + temp.value);
 
         return null;
     }
